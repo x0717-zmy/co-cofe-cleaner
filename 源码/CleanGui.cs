@@ -18,8 +18,8 @@ using System.Windows.Forms;
 [assembly: AssemblyCompany("冷咖啡制作")]
 [assembly: AssemblyCopyright("冷咖啡制作")]
 [assembly: AssemblyTrademark("Co_cofe")]
-[assembly: AssemblyVersion("1.3.2.0")]
-[assembly: AssemblyFileVersion("1.3.2.0")]
+[assembly: AssemblyVersion("1.3.3.0")]
+[assembly: AssemblyFileVersion("1.3.3.0")]
 
 namespace CoCofeClean
 {
@@ -1024,7 +1024,7 @@ rPills = new RectangleF(m + Theme.S(56), y + Theme.S(6), Theme.S(300), Theme.S(3
 
             busy = true;
             log.Clear();
-            log.Add("Co_cofe 系统垃圾清理 v1.3.2   运行时间: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            log.Add("Co_cofe 系统垃圾清理 v1.3.3   运行时间: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             log.Add("只清理 " + (pills.Value > 0 ? pills.Value + " 天前的文件" : "所有时间的临时文件") +
                     "   管理员: " + (Engine.Elevated ? "是" : "否"));
             log.Add(new string('-', 60));
@@ -1333,8 +1333,39 @@ rPills = new RectangleF(m + Theme.S(56), y + Theme.S(6), Theme.S(300), Theme.S(3
             }
 
             // 页脚（只留版本号）
-            Theme.DrawText(g, "v1.3.2 · 冷咖啡制作", fTiny, Theme.Ink3, rVersion,
+            Theme.DrawText(g, "v1.3.3 · 冷咖啡制作", fTiny, Theme.Ink3, rVersion,
                 Theme.Fmt(ContentAlignment.MiddleRight, false));
+        }
+
+        // ---------------- 关于 ----------------
+        private void ShowAbout()
+        {
+            string about =
+                "Co_cofe 系统垃圾清理   v1.3.3" + Environment.NewLine +
+                "冷咖啡制作 · MIT License" + Environment.NewLine +
+                Environment.NewLine +
+                "只清理临时文件和回收站，不动文档、程序、日志。" + Environment.NewLine +
+                Environment.NewLine +
+                "日志与配置：%LOCALAPPDATA%\\Co_cofe系统垃圾清理" + Environment.NewLine +
+                "命令行版：Co_cofe系统垃圾清理-命令行.exe" + Environment.NewLine +
+                "项目主页：github.com/x0717-zmy/co-cofe-cleaner" + Environment.NewLine +
+                Environment.NewLine +
+                "卸载：设置 → 应用 → 安装的应用 → Co_cofe系统垃圾清理";
+            MessageBox.Show(this, about, "关于 Co_cofe 系统垃圾清理",
+                MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            base.OnMouseMove(e);
+            Cursor wanted = rVersion.Contains(e.Location) ? Cursors.Hand : Cursors.Default;
+            if (Cursor != wanted) Cursor = wanted;
+        }
+
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            base.OnMouseDown(e);
+            if (rVersion.Contains(e.Location)) ShowAbout();
         }
 
         protected override void Dispose(bool disposing)
@@ -1358,9 +1389,28 @@ rPills = new RectangleF(m + Theme.S(56), y + Theme.S(6), Theme.S(300), Theme.S(3
         [DllImport("user32.dll")]
         private static extern bool SetProcessDPIAware();
 
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern IntPtr FindWindow(string cls, string title);
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr h, int cmd);
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr h);
+
+        private static Mutex instanceMutex;
+
         [STAThread]
         private static void Main()
         {
+            // 单实例：已经在跑就把已有窗口叫到前面，然后自己退出
+            bool created;
+            instanceMutex = new Mutex(true, "CoCofe.Clean.SingleInstance", out created);
+            if (!created)
+            {
+                IntPtr h = FindWindow(null, "Co_cofe 系统垃圾清理");
+                if (h != IntPtr.Zero) { ShowWindow(h, 9); SetForegroundWindow(h); }
+                return;
+            }
+
             try { SetProcessDPIAware(); } catch { }
             try
             {

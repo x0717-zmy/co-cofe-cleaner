@@ -17,7 +17,7 @@ namespace CoCofeSetup
     static class C
     {
         public const string AppName = "Co_cofe系统垃圾清理";
-        public const string Version = "1.3.2";
+        public const string Version = "1.3.3";
         public const string Publisher = "冷咖啡制作";
         public const string ExeName = "Co_cofe系统垃圾清理.exe";
         public const string UninstName = "unins000.exe";
