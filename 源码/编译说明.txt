@@ -1,0 +1,70 @@
+﻿重新编译说明
+============
+
+不需要 Visual Studio，用系统自带 csc.exe：
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe
+
+一、主程序（图形界面）
+----------------------
+  powershell -NoProfile -ExecutionPolicy Bypass -File 源码\build.ps1
+
+  等价的手工命令（在 源码\ 目录下）：
+
+  csc /nologo /target:winexe /platform:anycpu /optimize+ /codepage:65001 ^
+      /win32manifest:app.manifest ^
+      /win32icon:图标\cleaner.ico ^
+      /resource:图标\cleaner-256.png,APP_LOGO ^
+      /out:..\程序\Co_cofe系统垃圾清理.exe ^
+      CleanGui.cs ^
+      /r:System.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll
+
+  要点：
+    /win32manifest  清单里声明 dpiAware，提权启动也不会变成"拉伸版"界面
+    /resource ... APP_LOGO  界面左上角那张 56px 图，从资源读，缩放也清晰
+    /codepage:65001 源码是 UTF-8
+
+二、命令行版
+------------
+  powershell ... -File 源码\build.ps1 -Cli
+
+  csc /nologo /target:exe /platform:anycpu /optimize+ /codepage:65001 ^
+      /win32icon:图标\cleaner.ico ^
+      /out:..\程序\Co_cofe系统垃圾清理-命令行.exe CleanSafely.cs
+
+三、安装包（两步，有先后顺序）
+------------------------------
+  powershell ... -File 源码\安装\build-installer.ps1
+
+  1) 先编卸载程序（Setup.cs 里有两个 Main，用 /main 指定入口）：
+     csc /nologo /target:winexe /platform:anycpu /optimize+ /codepage:65001 ^
+         /win32manifest:setup.manifest /win32icon:..\图标\cleaner.ico ^
+         /out:unins.exe Setup.cs /main:CoCofeSetup.UninstallProgram
+
+  2) 再编安装程序，把主程序、文档、卸载程序都作为资源嵌进去：
+     csc /nologo /target:winexe /platform:anycpu /optimize+ /codepage:65001 ^
+         /win32manifest:setup.manifest /win32icon:..\图标\cleaner.ico ^
+         /out:..\..\安装包\Co_cofe系统垃圾清理_v1.3.1_安装版.exe ^
+         Setup.cs /main:CoCofeSetup.SetupProgram ^
+         /resource:..\..\程序\Co_cofe系统垃圾清理.exe,APP_EXE ^
+         /resource:..\..\程序\使用说明.txt,HELP_TXT ^
+         /resource:..\..\程序\快速上手.txt,QUICK_TXT ^
+         /resource:..\图标\cleaner.ico,APP_ICO ^
+         /resource:unins.exe,UNINS_EXE
+
+  资源名（APP_EXE / HELP_TXT / ...）必须和 Setup.cs 里 C.Payload 表一致。
+
+四、图标
+--------
+  源码\图标\make-icons.ps1 一次生成两套：
+    viewer.ico   建模看图工具用（右下角放大镜）
+    cleaner.ico  本工具用（右下角垃圾桶）
+  底图是看图工具项目里的 logo.png。
+
+五、安装包的命令行参数
+----------------------
+  /SILENT             静默安装
+  /DIR="安装路径"      指定安装目录
+  /NODESKTOP          不建桌面快捷方式
+  /NOSTARTMENU        不建开始菜单快捷方式
+
+  卸载：unins000.exe /SILENT

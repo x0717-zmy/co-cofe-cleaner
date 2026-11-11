@@ -1,0 +1,21 @@
+# 编译产物 / 分发包
+*.exe
+*.zip
+*.pdb
+*.obj
+bin/
+源码/安装/_build/
+
+# 临时文件
+*.tmp
+*.bak
+*.log
+Thumbs.db
+desktop.ini
+
+# 编辑器 / IDE
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo

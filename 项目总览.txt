@@ -1,0 +1,61 @@
+﻿Co_cofe 系统垃圾清理 · 项目总览
+================================
+
+版本   v1.3.1
+作者   冷咖啡制作
+许可   MIT
+
+一句话
+------
+只清临时文件和回收站的安全清理工具，界面与「Co_cofe 建模看图工具」同一套视觉。
+
+目录
+----
+  程序\            发布用：exe、使用说明.txt、快速上手.txt
+  源码\            主程序源码
+    源码\图标\      图标生成脚本 + cleaner.ico / viewer.ico
+    源码\安装\      安装程序源码（Setup.cs 同时含安装和卸载）
+  安装包\          Co_cofe系统垃圾清理_v1.3.1_安装版.exe
+  朋友圈素材\       界面截图、朋友圈一张图
+
+构建
+----
+  主程序    powershell -NoProfile -ExecutionPolicy Bypass -File 源码\build.ps1
+  命令行版  ... 源码\build.ps1 -Cli
+  安装包    ... 源码\安装\build-installer.ps1
+  图标      ... 源码\图标\make-icons.ps1
+
+环境要求
+--------
+  Windows 7 SP1 及以上（主要测试 Win11）
+  .NET Framework 4.x（系统自带，不额外安装）
+  编译只需要系统自带的 csc.exe，不需要 Visual Studio
+
+数据写入
+--------
+  %LOCALAPPDATA%\Co_cofe系统垃圾清理\cleanup-*.log   清理记录
+  %LOCALAPPDATA%\Co_cofe系统垃圾清理\window.txt     窗口位置/大小
+
+安装包做了什么
+--------------
+  1. 释放 4 个文件到安装目录（主程序、使用说明、快速上手、app.ico）
+  2. 释放卸载程序 unins000.exe
+  3. 创建桌面（公用桌面）和开始菜单快捷方式
+  4. 写 HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\CoCofeClean
+     显示在「设置 → 应用」，含版本、发布者、大小、卸载命令
+
+卸载做了什么
+------------
+  1. 结束正在运行的程序
+  2. 删桌面/开始菜单快捷方式
+  3. 删注册表项
+  4. 复制自己到 %TEMP% 再清理安装目录（避免"自己删自己"）
+  5. 用 cmd 延时删除临时文件
+  注意：卸载不删 %LOCALAPPDATA%\Co_cofe系统垃圾清理（日志和窗口配置）。
+
+已验证
+------
+  · 绿色版：扫描 / 预览 / 清理 / 回收站 / 提权 / 缩放窗口 / 记忆窗口 全部实测通过
+  · 安装包：/SILENT 静默安装实测通过（文件 4 个 + 卸载程序，注册表项正确写入）
+  · 卸载程序：代码与看图工具同一套；本机自动提权环境限制，未做自动化回归，
+    建议手动点一次「设置 → 应用 → 卸载」确认
