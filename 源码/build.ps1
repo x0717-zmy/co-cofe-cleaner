@@ -7,15 +7,15 @@
 #>
 param(
     [switch]$Cli,
-    [string]$IconPath = (Join-Path $PSScriptRoot '..\iconwork\cleaner.ico'),
-    [string]$LogoPath = (Join-Path $PSScriptRoot '..\iconwork\cleaner-256.png'),
+    [string]$IconPath = (Join-Path $PSScriptRoot '图标\cleaner.ico'),
+    [string]$LogoPath = (Join-Path $PSScriptRoot '图标\cleaner-256.png'),
     [switch]$CopyToDesktop
 )
 
 $ErrorActionPreference = 'Stop'
 $guiSrc = Join-Path $PSScriptRoot 'CleanGui.cs'
 $cliSrc = Join-Path $PSScriptRoot 'CleanSafely.cs'
-$bin = Join-Path $PSScriptRoot 'bin'
+$bin = Join-Path $PSScriptRoot '..\程序'
 $manifest = Join-Path $PSScriptRoot 'app.manifest'
 
 if (-not (Test-Path -LiteralPath $IconPath)) { throw "找不到图标：$IconPath（先运行 ..\iconwork\make-icons.ps1）" }

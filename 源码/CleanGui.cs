@@ -18,8 +18,8 @@ using System.Windows.Forms;
 [assembly: AssemblyCompany("冷咖啡制作")]
 [assembly: AssemblyCopyright("冷咖啡制作")]
 [assembly: AssemblyTrademark("Co_cofe")]
-[assembly: AssemblyVersion("1.3.1.0")]
-[assembly: AssemblyFileVersion("1.3.1.0")]
+[assembly: AssemblyVersion("1.3.2.0")]
+[assembly: AssemblyFileVersion("1.3.2.0")]
 
 namespace CoCofeClean
 {
@@ -1024,7 +1024,7 @@ rPills = new RectangleF(m + Theme.S(56), y + Theme.S(6), Theme.S(300), Theme.S(3
 
             busy = true;
             log.Clear();
-            log.Add("Co_cofe 系统垃圾清理 v1.3.1   运行时间: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            log.Add("Co_cofe 系统垃圾清理 v1.3.2   运行时间: " + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             log.Add("只清理 " + (pills.Value > 0 ? pills.Value + " 天前的文件" : "所有时间的临时文件") +
                     "   管理员: " + (Engine.Elevated ? "是" : "否"));
             log.Add(new string('-', 60));
@@ -1333,7 +1333,7 @@ rPills = new RectangleF(m + Theme.S(56), y + Theme.S(6), Theme.S(300), Theme.S(3
             }
 
             // 页脚（只留版本号）
-            Theme.DrawText(g, "v1.3.1 · 冷咖啡制作", fTiny, Theme.Ink3, rVersion,
+            Theme.DrawText(g, "v1.3.2 · 冷咖啡制作", fTiny, Theme.Ink3, rVersion,
                 Theme.Fmt(ContentAlignment.MiddleRight, false));
         }
 

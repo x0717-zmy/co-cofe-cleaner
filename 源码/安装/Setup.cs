@@ -17,7 +17,7 @@ namespace CoCofeSetup
     static class C
     {
         public const string AppName = "Co_cofe系统垃圾清理";
-        public const string Version = "1.3.1";
+        public const string Version = "1.3.2";
         public const string Publisher = "冷咖啡制作";
         public const string ExeName = "Co_cofe系统垃圾清理.exe";
         public const string UninstName = "unins000.exe";
@@ -412,6 +412,11 @@ namespace CoCofeSetup
                 string sm = C.StartMenuDir;
                 Directory.CreateDirectory(sm);
                 C.CreateShortcut(Path.Combine(sm, C.LinkName + ".lnk"), exe, dir, icon, C.AppName);
+
+                // 开始菜单里再放一个「卸载」，这样不用去设置里翻
+                string unins = Path.Combine(dir, C.UninstName);
+                C.CreateShortcut(Path.Combine(sm, "卸载 " + C.LinkName + ".lnk"),
+                                 unins, dir, unins, "卸载 " + C.AppName);
             }
             if (desk)
             {
@@ -506,6 +511,7 @@ namespace CoCofeSetup
             if (args.Length >= 2 && args[0].Equals("/CLEAN", StringComparison.OrdinalIgnoreCase))
             {
                 dir = args[1];
+                try { Environment.CurrentDirectory = Path.GetTempPath(); } catch { }
                 C.KillRunningApp();
                 Thread.Sleep(600);
 
@@ -557,6 +563,8 @@ namespace CoCofeSetup
                 File.Copy(exePath, tmp, true);
                 var psi = new ProcessStartInfo(tmp, "/CLEAN \"" + dir + "\"" + (silent ? " /SILENT" : ""));
                 psi.UseShellExecute = false;
+                // 关键：不能继承安装目录当工作目录，否则该目录被占用删不掉
+                psi.WorkingDirectory = Path.GetTempPath();
                 Process.Start(psi);
             }
             catch (Exception ex)
